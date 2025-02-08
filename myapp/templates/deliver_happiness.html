@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Deliver Happiness - Annapravah{% endblock %}
+{% block activeDeliver %}active{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white d-flex align-items-center">
+    <div class="container">
+        <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" class="img-fluid mb-3" style="max-width: 150px;">
+        <h1 class="display-4 fw-bold">Deliver Happiness</h1>
+        <p class="lead">Become a delivery partner and help transport meals to those in need. Your efforts can change lives!</p>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-4">Why Deliver Happiness?</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <p class="text-muted">As a delivery partner, you’ll play a crucial role in making sure food donations reach the people who need them the most. You can help save food from waste and ensure it's delivered to those in need, bringing joy and hope to many families.</p>
+        </div>
+        <div class="col-md-6">
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle text-success"></i> Flexibility in delivery schedules.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Help reduce food wastage while supporting communities.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Partner with us for a better tomorrow.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Track deliveries and impact on the platform.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-success btn-lg">Become a Delivery Partner</a>
+    </div>
+</div>
+
+{% endblock %}

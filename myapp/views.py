@@ -51,3 +51,12 @@ def request_food(request):
 
 def navigate(request):
     return render(request, 'navigate.html')
+
+def network(request):
+    return render(request, 'network.html')
+
+def deliver_happiness(request):
+    return render(request, 'deliver_happiness.html')
+
+def partner_ngo(request):
+    return render(request, 'partner_ngo.html')
