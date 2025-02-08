@@ -4,5 +4,18 @@
 <div class="container mt-5 pt-5">
     <h2>Logistics & Tracking</h2>
     <p>Real-time GPS tracking and pickup notifications.</p>
+    <button onclick="redirectToNavigate()">Show Route</button>
 </div>
+
+<script>
+    function redirectToNavigate() {
+        // Arbitrary coordinates in New Delhi, India
+        const pickupLat = 28.6139;
+        const pickupLon = 77.2090;
+        const deliveryLat = 28.7041;
+        const deliveryLon = 77.1025;
+
+        window.location.href = `/navigate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&deliveryLat=${deliveryLat}&deliveryLon=${deliveryLon}`;
+    }
+</script>
 {% endblock %}
