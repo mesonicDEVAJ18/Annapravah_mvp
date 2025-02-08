@@ -1,8 +1,225 @@
 {% extends 'base.html' %}
-{% block title %}Request Food - Annapravah{% endblock %}
+
 {% block content %}
-<div class="container mt-5 pt-5">
-    <h2>Request Food</h2>
-    <p>Fill in your details to request food.</p>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#request-food">
+                            Request Food
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#past-requests">
+                            Past Requests
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="tab-content">
+                <!-- Request Food Form -->
+                    <div class="tab-pane fade show active" id="request-food">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="background-color: #6c757d; color: white; border-radius: 8px;">
+                        <h1 class="fs-2 fw-bold" style="color: #ffffff;">Request Food</h1>
+                    </div>
+                    <form method="post" action="/request-food/create/" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                        
+                            <!-- Location -->
+                            <div class="col-12">
+                                <div class="position-relative">
+                                    <label for="location" class="form-label">Location (Where food is needed)</label>
+                                    <input type="text" class="form-control" id="location" name="location" required>
+                                    <div class="invalid-feedback">
+                                        Please provide the location where food is needed.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Number of People -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="numberOfPeople" class="form-label">Number of People</label>
+                                    <input type="number" class="form-control" id="numberOfPeople" name="number_of_people" required>
+                                    <div class="invalid-feedback">
+                                        Please provide the number of people to feed.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preferred Date and Time -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="preferredDateTime" class="form-label">Preferred Date and Time</label>
+                                    <input type="datetime-local" class="form-control" id="preferredDateTime" name="preferred_datetime" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a preferred date and time for delivery.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Food Type -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="foodType" class="form-label">Type of Food Needed</label>
+                                    <select class="form-select" id="foodType" name="food_type" required>
+                                        <option value="">Select food type</option>
+                                        <option value="prepared">Prepared Food</option>
+                                        <option value="groceries">Groceries</option>
+                                        <option value="produce">Fresh Produce</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select the type of food needed.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Special Instructions -->
+                            <div class="col-12">
+                                <div class="position-relative">
+                                    <label for="specialInstructions" class="form-label">Special Instructions</label>
+                                    <textarea class="form-control" id="specialInstructions" name="special_instructions" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success w-100">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Past Requests Section -->
+                <div class="tab-pane fade" id="past-requests">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1>Past Requests</h1>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Organization</th>
+                                    <th>Location</th>
+                                    <th>Number of People</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in past_requests %}
+                                <tr>
+                                    <td>{{ request.created_at }}</td>
+                                    <td>{{ request.organization_name }}</td>
+                                    <td>{{ request.location }}</td>
+                                    <td>{{ request.number_of_people }}</td>
+                                    <td>
+                                        <span class="badge {% if request.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ request.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
+
+<!-- Custom CSS for Styling -->
+<style>
+    .sidebar {
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+    }
+
+    .nav-link.active {
+        font-weight: bold;
+        color: #0d6efd !important;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #f8f9fa; /* Off-white text color */
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+    }
+
+    .badge {
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    .bg-success {
+        background-color: #198754 !important;
+    }
+</style>
+
+<!-- Bootstrap Validation Script -->
+<script>
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 {% endblock %}
