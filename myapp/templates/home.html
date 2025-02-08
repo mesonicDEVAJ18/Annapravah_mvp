@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Home - Annapravah{% endblock %}
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h2>Welcome to Annapravah</h2>
+    <p>Help fight food waste by donating or requesting food.</p>
+    <a href="{% url 'donor_dashboard' %}" class="btn btn-success">Donate Food</a>
+    <a href="{% url 'request_food' %}" class="btn btn-primary">Request Food</a>
+</div>
+{% endblock %}
