@@ -1,7 +1,5 @@
 from django.db import models
 
-from django.db import models
-
 class Donation(models.Model):
     FOOD_TYPE_CHOICES = [
         ('prepared', 'Prepared Food'),
