@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Join Our Network - Annapravah{% endblock %}
+{% block activeJoin %}active{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white d-flex align-items-center">
+    <div class="container">
+        <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" class="img-fluid mb-3" style="max-width: 150px;">
+        <h1 class="display-4 fw-bold">Join Our Network</h1>
+        <p class="lead">Are you a restaurant, wedding caterer, or grocery store? Reach NGOs easily and donate food to those in need.</p>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-4">Why Join Our Network?</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <p class="text-muted">By joining Annapravah's network, you can make a significant impact on reducing food waste and helping the community. Your contributions will be matched with the right NGOs, ensuring the food reaches those in need.</p>
+        </div>
+        <div class="col-md-6">
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle text-success"></i> Access to a wide network of NGOs.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Easy food listing process.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Track your contributions and impact.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Help reduce food wastage.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-success btn-lg">Join Now</a>
+    </div>
+</div>
+
+{% endblock %}

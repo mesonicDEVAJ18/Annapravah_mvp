@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Partner NGOs - Annapravah{% endblock %}
+{% block activeNGO %}active{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white d-flex align-items-center">
+    <div class="container">
+        <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" class="img-fluid mb-3" style="max-width: 150px;">
+        <h1 class="display-4 fw-bold">Partner with Us</h1>
+        <p class="lead">Join our mission to reduce food waste and support those in need. Together, we can make a greater impact.</p>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-4">Why Partner With Annapravah?</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <p class="text-muted">As an NGO partner, you can help distribute food to those who need it the most. You will have access to a large network of donors and partners, making it easier to ensure food gets into the right hands quickly and efficiently.</p>
+        </div>
+        <div class="col-md-6">
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle text-success"></i> Access to a wide range of donors.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Real-time updates on food donations.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Efficient distribution process.</li>
+                <li><i class="bi bi-check-circle text-success"></i> Join a growing network of impactful NGOs.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'request_food' %}" class="btn btn-success btn-lg">Become an NGO Partner</a>
+    </div>
+</div>
+
+{% endblock %}
