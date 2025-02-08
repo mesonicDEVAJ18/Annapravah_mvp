@@ -1,12 +1,93 @@
 {% extends 'base.html' %}
-{% block title %}Donor Dashboard - Annapravah{% endblock %}
+
 {% block content %}
-<div class="container mt-5 pt-5">
-    <h2>Donor Dashboard</h2>
-    <ul>
-        <li><a href="#">List Food Donation</a></li>
-        <li><a href="#">View Past Donations</a></li>
-        <li><a href="#">Modify Before Match</a></li>
-    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#add-donation">
+                            Add Donation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#past-donations">
+                            Past Donations
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="add-donation">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1>Add New Donation</h1>
+                    </div>
+                    <form method="post" action="/donations/create/">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Food Type</label>
+                            <select name="food_type" class="form-select" required>
+                                <option value="">Select food type</option>
+                                <option value="prepared">Prepared Food</option>
+                                <option value="groceries">Groceries</option>
+                                <option value="produce">Fresh Produce</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity (kg)</label>
+                            <input type="number" name="quantity" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pickup Location</label>
+                            <input type="text" name="location" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Submit Donation</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="past-donations">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1>Past Donations</h1>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Food Type</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Claimed By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in donations %}
+                                <tr>
+                                    <td>{{ donation.created_at }}</td>
+                                    <td>{{ donation.food_type }}</td>
+                                    <td>{{ donation.quantity }} kg</td>
+                                    <td>
+                                        <span class="badge {% if donation.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ donation.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ donation.claimed_by|default:"Not claimed" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
 {% endblock %}
