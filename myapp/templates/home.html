@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
+{% load static %} 
 {% block title %}Home - Annapravah{% endblock %}
 {% block content %}
-<div class="container mt-5 pt-5">
+<div class="container mt-5 pt-5 text-center">
+    <!-- Logo at the top -->
+    <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" class="img-fluid mb-4" style="max-width: 200px;">
+
     <h2>Welcome to Annapravah</h2>
     <p>Help fight food waste by donating or requesting food.</p>
-    <a href="{% url 'donor_dashboard' %}" class="btn btn-success">Donate Food</a>
-    <a href="{% url 'request_food' %}" class="btn btn-primary">Request Food</a>
+
+    <div class="mt-3">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-success btn-lg mx-2">Donate Food</a>
+        <a href="{% url 'request_food' %}" class="btn btn-primary btn-lg mx-2">Request Food</a>
+    </div>
 </div>
 {% endblock %}
