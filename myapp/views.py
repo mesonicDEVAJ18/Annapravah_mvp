@@ -37,9 +37,6 @@ def home(request):
 def donor_dashboard(request):
     return render(request, 'donor_dashboard.html')
 
-def ai_matching(request):
-    return render(request, 'ai_matching.html')
-
 def logistics(request):
     return render(request, 'logistics.html')
 
