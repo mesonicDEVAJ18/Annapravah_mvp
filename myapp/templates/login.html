@@ -3,19 +3,28 @@
 
 {% block content %}
 <div class="container mt-5 pt-5">
-    <h2 class="text-center">Login to Annapravah</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+    <div class="row justify-content-center">
+        <div class="col-md-4">  <!-- Set max width to a smaller size -->
+            <div class="card shadow p-4">
+                <h2 class="text-center mb-4">Login</h2>
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control rounded-pill" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control rounded-pill" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Login</button>
+                </form>
+                <p class="text-center mt-3">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
-    <p class="text-center mt-3">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
 </div>
 {% endblock %}
