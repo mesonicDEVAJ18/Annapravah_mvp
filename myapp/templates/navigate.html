@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Navigate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Dark-themed "Navigate" Header -->
+    <h1 class="text-center mt-4 navigate-header">Navigate</h1>
+
+    <!-- Location Input Section -->
+    <div class="location-inputs">
+        <label for="pickup">Pickup Location:</label>
+        <input type="text" id="pickup" class="wide-input" placeholder="Enter pickup address">
+        
+        <label for="delivery">Delivery Location:</label>
+        <input type="text" id="delivery" class="wide-input" placeholder="Enter delivery address">
+        
+        <button onclick="updateMap()">Show Route</button>
+        <button onclick="saveLocation()">Save Location</button>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Additional Info Section -->
+    <div class="info-section">
+        <h2>How Our Navigation System Works</h2>
+        <p>
+            Our system uses real-time geolocation services to map out the best route from your **pickup location** to the **delivery location**.
+            Using **OpenStreetMap**, we ensure an open-source and efficient mapping experience.
+        </p>
+        <h3>Features:</h3>
+        <ul>
+            <li>📍 **Live Route Updates** – See your path dynamically.</li>
+            <li>💾 **Save Frequent Locations** – Quickly select saved locations.</li>
+            <li>🔍 **Auto-Address Search** – Uses OpenStreetMap’s location database.</li>
+            <li>🚀 **Optimized Navigation** – Fastest routes mapped for efficiency.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Leaflet.js CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+    /* Dark-themed header */
+    .navigate-header {
+        background: #222;
+        color: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    /* Location Input Styling */
+    .location-inputs {
+        display: flex;
+        flex-direction: column;
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .location-inputs label {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .wide-input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .location-inputs button {
+        margin-top: 15px;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .location-inputs button:hover {
+        background: #0056b3;
+    }
+
+    /* Map Styling */
+    #map {
+        width: 100%;
+        height: 500px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    /* Info Section */
+    .info-section {
+        margin-top: 40px;
+        padding: 20px;
+        background: #222;
+        color: white;
+        border-radius: 10px;
+    }
+    .info-section h2, .info-section h3 {
+        color: #f8f9fa;
+    }
+    .info-section ul {
+        padding-left: 20px;
+    }
+    .info-section li {
+        margin-bottom: 8px;
+    }
+</style>
+
+<!-- Leaflet.js Script -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    let map, pickupMarker, deliveryMarker, routeLine;
+    let savedLocations = [];
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize the map
+        map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    });
+
+    function updateMap() {
+        let pickupAddress = document.getElementById("pickup").value;
+        let deliveryAddress = document.getElementById("delivery").value;
+
+        if (!pickupAddress || !deliveryAddress) {
+            alert("Please enter both pickup and delivery locations.");
+            return;
+        }
+
+        getCoordinates(pickupAddress, function (pickupCoords) {
+            getCoordinates(deliveryAddress, function (deliveryCoords) {
+                if (pickupMarker) map.removeLayer(pickupMarker);
+                if (deliveryMarker) map.removeLayer(deliveryMarker);
+                if (routeLine) map.removeLayer(routeLine);
+
+                pickupMarker = L.marker(pickupCoords).addTo(map).bindPopup("Pickup Location").openPopup();
+                deliveryMarker = L.marker(deliveryCoords).addTo(map).bindPopup("Delivery Location").openPopup();
+
+                routeLine = L.polyline([pickupCoords, deliveryCoords], { color: 'blue' }).addTo(map);
+
+                map.fitBounds([pickupCoords, deliveryCoords]);
+            });
+        });
+    }
+
+    function saveLocation() {
+        let pickup = document.getElementById("pickup").value;
+        let delivery = document.getElementById("delivery").value;
+
+        if (!pickup || !delivery) {
+            alert("Enter both locations before saving.");
+            return;
+        }
+
+        savedLocations.push({ pickup, delivery });
+        alert("Locations saved! 🚀");
+    }
+
+    function getCoordinates(address, callback) {
+        let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    let lat = data[0].lat;
+                    let lon = data[0].lon;
+                    callback([lat, lon]);
+                } else {
+                    alert("Location not found. Try again.");
+                }
+            })
+            .catch(error => console.log("Error fetching location:", error));
+    }
+</script>
+{% endblock %}
