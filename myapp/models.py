@@ -2,13 +2,13 @@ from django.db import models
 
 class Donation(models.Model):
     FOOD_TYPE_CHOICES = [
-        ('prepared', 'Prepared Food'),
-        ('groceries', 'Groceries'),
-        ('produce', 'Fresh Produce'),
+        ('Prepared', 'Prepared Food'),
+        ('Groceries', 'Groceries'),
+        ('Produce', 'Fresh Produce'),
     ]
 
     food_type = models.CharField(max_length=20, choices=FOOD_TYPE_CHOICES)
-    quantity = models.FloatField()  # Quantity in kg
+    quantity = models.FloatField(max_length=10)  # Quantity in kg
     expiry_date = models.DateField()
     current_location = models.CharField(max_length=255, blank=True, null=True)  # Auto-detected location
     manual_location = models.CharField(max_length=255)  # Manually entered location
