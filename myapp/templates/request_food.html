@@ -163,7 +163,7 @@
         margin-top: 1rem;
     }
 
-    .past-requests-banner {
+    .past-donations-banner {
         background-image: url('https://images.unsplash.com/photo-1594708767771-a7502209ff51?auto=format&fit=crop&q=80');
     }
 
@@ -182,6 +182,7 @@
         z-index: 1;
         padding: 2rem;
         color: white;
+        text-align: center;
     }
 
     .header-content h1 {
@@ -292,20 +293,90 @@
         color: #fff;
     }
 
+    /* --- Enhancements for Mobile View --- */
     @media (max-width: 768px) {
+        /* Hide the sidebar and turn it into a compact nav bar */
         .sidebar {
-            position: static;
-            height: auto;
-            padding-top: 0;
+            width: 100%;
+            min-height: auto;
+            background-color: transparent;
+            box-shadow: none;
+            padding: 0;
+            margin-bottom: 1rem;
         }
 
+        /* Make the sidebar links fit in a single line */
+        .sidebar .nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap; /* Ensures buttons stay on the same line */
+            gap: 10px;
+        }
+
+        .sidebar .nav-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 2rem;
+            background-color: #198754;
+            color: white !important;
+            text-align: center;
+            transition: all 0.3s ease;
+            white-space: nowrap; /* Prevents buttons from wrapping */
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #145c32;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #145c32;
+        }
+
+        /* Reduce header banner size on mobile */
         .header-banner {
             height: 150px;
+            margin-bottom: 1rem;
         }
 
         .header-content h1 {
             font-size: 2rem;
+            text-align: center;
+        }
+
+        /* Make form and table containers take full width */
+        .form-container, .table-container {
+            padding: 1rem;
+            box-shadow: none;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+        }
+
+        .btn-success {
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+
+        /* Ensure the Add Donation form is displayed first on mobile */
+        .tab-content {
+            margin-top: 1rem;
+        }
+
+        /* Make table scrollable on mobile */
+        .table-container {
+            overflow-x: auto;
         }
     }
+
+    /* Ensure a smooth transition effect for all elements */
+    * {
+        transition: all 0.3s ease-in-out;
+    }
 </style>
+
 {% endblock %}
