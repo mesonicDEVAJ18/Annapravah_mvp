@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Donate - Annapravah{% endblock %}
+{% block activeDonor %}active{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -32,7 +35,8 @@
                     </div>
                     
                     <div class="form-container">
-                        <form method="post" action="/donations/create/">
+                        {# <form method="post" {#  action="{% url 'donation_add' %}> DEVAJ DO NOT FUCKING FORGET TO FIX THIS#}
+                        <form method="post">
                             {% csrf_token %}
                             <div class="mb-4">
                                 <label class="form-label">Food Type</label>
@@ -52,8 +56,13 @@
                                 <input type="date" name="expiry_date" class="form-control" required>
                             </div>
                             <div class="mb-4">
+                                <label class="form-label">Current Location</label>
+                                <input type="text" id="current-location" name="current_location" class="form-control" readonly>
+                                <small class="text-muted">We'll automatically detect your location.</small>
+                            </div>
+                            <div class="mb-4">
                                 <label class="form-label">Pickup Location</label>
-                                <input type="text" name="location" class="form-control" required>
+                                <input type="text" name="manual_location" class="form-control" required>
                             </div>
                             <button type="submit" class="btn btn-success">Submit Donation</button>
                         </form>
@@ -65,7 +74,7 @@
                         <div class="overlay"></div>
                         <div class="header-content">
                             <h1>Past Donations</h1>
-                            <p>Track your contribution history</p>
+                            <p>Track our contribution history</p>
                         </div>
                     </div>
                     
@@ -262,4 +271,18 @@
         }
     }
 </style>
+
+<script>
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const currentLocationInput = document.getElementById('current-location');
+            currentLocationInput.value = `${latitude}, ${longitude}`;
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+</script>
+
 {% endblock %}

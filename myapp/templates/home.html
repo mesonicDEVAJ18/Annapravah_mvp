@@ -2,9 +2,8 @@
 {% load static %} 
 {% block title %}Home - Annapravah{% endblock %}
 {% block activeHome %}active{% endblock %}
-{% block content %}
 
-<!-- Hero Section -->
+{% block content %}
 <div class="hero-section text-center text-white d-flex align-items-center">
     <div class="container">
         <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" class="img-fluid mb-3" style="max-width: 150px;">
@@ -12,7 +11,7 @@
         <p class="lead">Together we can reduce food waste and feed those in need.</p>
         <div class="d-flex justify-content-center gap-3">
             <a href="{% url 'donor_dashboard' %}" class="btn btn-success btn-lg">Donate Food</a>
-            <a href="{% url 'request_food' %}" class="btn btn-primary btn-lg">Request Food</a>
+            <a href="{% url 'request_food' %}" class="btn btn-success btn-lg">Request Food</a>
         </div>
     </div>
 </div>
@@ -33,6 +32,9 @@
                 <h3 class="display-4 fw-bold text-success">50+</h3>
                 <p class="text-muted">Partner NGOs</p>
             </div>
+        </div>
+        <div class="text-center mt-2">
+            <h6 class="text-muted">*Fake stats for design reference</h6>
         </div>
     </div>
 </div>
