@@ -16,12 +16,12 @@
                 <img src="{% static 'images/logo.png' %}" alt="Annapravah Logo" width="50" height="50" class="d-inline-block align-text-top">
                 Annapravah
             </a>
-    
+
             <!-- Navbar Toggler (For Mobile View) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <!-- Navbar Content -->
             <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
                 <div class="offcanvas-header">
@@ -44,10 +44,10 @@
                         </li>
                     </ul>
                     
-                    <!-- Buttons in the Navbar -->
+                    <!-- Login & Sign Up Buttons -->
                     <div class="d-flex">
-                        <a href="{% url 'donor_dashboard' %}" class="btn btn-success mx-2">Donate Food</a>
-                        <a href="{% url 'request_food' %}" class="btn btn-primary">Request Food</a>
+                        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary ms-3">Sign Up</a>
                     </div>
                 </div>
             </div>

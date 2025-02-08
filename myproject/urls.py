@@ -25,4 +25,6 @@ urlpatterns = [
     path('logistics/', views.logistics, name='logistics'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('request-food/', views.request_food, name='request_food'),
+    path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),
 ]
