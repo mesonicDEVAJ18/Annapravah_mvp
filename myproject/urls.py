@@ -20,7 +20,10 @@ from myapp import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    
     path('donor-dashboard/', views.donor_dashboard, name='donor_dashboard'),
+    path('donation_add/', views.donation_add, name='donation_add'),
+    
     path('logistics/', views.logistics, name='logistics'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('request-food/', views.request_food, name='request_food'),

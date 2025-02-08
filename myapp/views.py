@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from .forms import DonationForm
+from .models import Donation
 
 def login_view(request):
     if request.method == "POST":
@@ -35,7 +38,31 @@ def home(request):
     return render(request, 'home.html')
 
 def donor_dashboard(request):
-    return render(request, 'donor_dashboard.html')
+    donations = Donation.objects.all()
+    return render(request, 'donor_dashboard.html', {'donations': donations})
+
+def donation_add(request):
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            # Save the donation
+            donation = form.save(commit=False)
+            donation.save()  # Save the donation to the database
+            messages.success(request, 'Donation submitted successfully!')
+            return redirect('donor_dashboard')  # Redirect to the same page after submission
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = DonationForm()
+
+    # Fetch past donations to display in the "Past Donations" tab
+    past_donations = Donation.objects.all().order_by('-created_at')
+
+    context = {
+        'form': form,
+        'donations': past_donations,
+    }
+    return render(request, 'donor_dashboard.html', context)
 
 def logistics(request):
     return render(request, 'logistics.html')
