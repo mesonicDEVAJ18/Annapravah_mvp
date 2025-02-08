@@ -194,8 +194,8 @@
                         routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
                         map.fitBounds(routeLine.getBounds());
 
-                        document.getElementById("duration").innerText = `Estimated Time: ${(route.duration / 60).toFixed(2)} min`;
-                        document.getElementById("distance").innerText = `Distance: ${(route.distance / 1000).toFixed(2)} km`;
+                        document.getElementById("duration").innerText = `${(route.duration / 60).toFixed(2)} min`;
+                        document.getElementById("distance").innerText = `${(route.distance / 1000).toFixed(2)} km`;
                     }
                 })
                 .catch(error => console.error("Error fetching route data:", error));
