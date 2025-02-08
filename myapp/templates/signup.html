@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Sign Up - Annapravah{% endblock %}
+{% load static %} 
+{% block title %}Signup - Annapravah{% endblock %}
 
 {% block content %}
 <div class="container mt-5 pt-5">
     <div class="row justify-content-center">
-        <div class="col-md-4">  <!-- Keep form width small -->
+        <div class="col-md-4">
             <div class="card shadow p-4">
                 <h2 class="text-center mb-4">Sign Up</h2>
-                {% if error %}
-                    <div class="alert alert-danger">{{ error }}</div>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
                 {% endif %}
+
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -30,7 +35,10 @@
                     </div>
                     <button type="submit" class="btn btn-success w-100 rounded-pill">Sign Up</button>
                 </form>
-                <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+
+                <p class="text-center mt-3">Already have an account? 
+                    <a href="{% url 'login' %}">Login</a>
+                </p>
             </div>
         </div>
     </div>

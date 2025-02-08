@@ -4,42 +4,66 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import DonationForm, RequestForm
 from .models import Donation, Request
+import logging
+
+logger = logging.getLogger(__name__)
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == "POST":
-        print(f"📝 Received login attempt with data: {request.POST}")  # Debugging print
+        print(f"🛠 DEBUG: Received POST data: {request.POST}")
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        logger.info(f"📝 Received login attempt for username: {username}")
 
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            print(f"✅ Login successful for user: {username}")  # Debugging print
             login(request, user)
+            logger.info(f"✅ Login successful for user: {username}")
             return redirect('home')
         else:
-            print(f"❌ Login failed for user: {username}")  # Debugging print
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            logger.warning(f"❌ Login failed for user: {username}")
+            messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
 
+
 def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == "POST":
-        print(f"📝 Received signup attempt with data: {request.POST}")  # Debugging print
+        print(f"🛠 DEBUG: Received POST data: {request.POST}")
         username = request.POST.get('username')
         email = request.POST.get('email')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
-        if password1 == password2:
+        logger.info(f"📝 Received signup attempt for username: {username}")
+
+        if User.objects.filter(username=username).exists():
+            logger.warning(f"❌ Signup failed: Username '{username}' already exists")
+            messages.error(request, 'Username is already taken.')
+        elif password1 != password2:
+            logger.warning(f"❌ Signup failed for {username}: Passwords do not match")
+            messages.error(request, 'Passwords do not match.')
+        else:
             user = User.objects.create_user(username=username, email=email, password=password1)
             user.save()
-            print(f"✅ Signup successful for user: {username}")  # Debugging print
+            logger.info(f"✅ Signup successful for user: {username}")
+            messages.success(request, 'Account created successfully! You can now log in.')
             return redirect('login')
-        else:
-            print(f"❌ Signup failed: Passwords do not match")  # Debugging print
-            messages.error(request, 'Passwords do not match.')
 
     return render(request, 'signup.html')
+
+
+def logout_view(request):
+    if request.user.is_authenticated:
+        logger.info(f"🔓 User logged out: {request.user.username}")
+        logout(request)
+    return redirect('login')
 
 def home(request):
     return render(request, 'home.html')
