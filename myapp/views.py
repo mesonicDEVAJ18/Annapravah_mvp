@@ -48,3 +48,6 @@ def admin_panel(request):
 
 def request_food(request):
     return render(request, 'request_food.html')
+
+def navigate(request):
+    return render(request, 'navigate.html')

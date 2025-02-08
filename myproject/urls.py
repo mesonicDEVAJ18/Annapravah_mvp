@@ -27,4 +27,5 @@ urlpatterns = [
     path('request-food/', views.request_food, name='request_food'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
+    path('navigate/', views.navigate, name='navigate'),
 ]
