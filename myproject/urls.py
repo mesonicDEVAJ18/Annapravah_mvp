@@ -26,7 +26,10 @@ urlpatterns = [
     
     path('logistics/', views.logistics, name='logistics'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
+
     path('request-food/', views.request_food, name='request_food'),
+    path('request_add/', views.request_add, name='request_add'),
+
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
     path('navigate/', views.navigate, name='navigate'),

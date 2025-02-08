@@ -56,12 +56,20 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Current Location</label>
-                                <input type="text" id="current-location" name="current_location" class="form-control">
-                                <small class="text-muted">We'll automatically detect your location.</small>
+                                <div class="input-group">
+                                    <input type="text" id="current-location" name="current_location" class="form-control">
+                                    <button type="button" class="btn btn-primary" onclick="getDonationLocation()">Use My Location</button>
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label">Pickup Location</label>
-                                <input type="text" name="manual_location" class="form-control" required>
+                            <div class="mb-4 row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="text" id="latitude" name="latitude" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="text" id="longitude" name="longitude" class="form-control" readonly>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-success">Submit Donation</button>
                         </form>
@@ -335,17 +343,49 @@
     }
 </style>
 
-
 <script>
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const currentLocationInput = document.getElementById('current-location');
-            currentLocationInput.value = `${latitude}, ${longitude}`;
-        });
-    } else {
-        alert("Geolocation is not supported by this browser.");
+    function getDonationLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setDonationLocation, showDonationError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function setDonationLocation(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Set the latitude and longitude fields
+        document.getElementById("latitude").value = latitude;
+        document.getElementById("longitude").value = longitude;
+
+        // Use reverse geocoding to get the address
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("current-location").value = data.display_name;
+            })
+            .catch(error => {
+                alert("Unable to fetch location details.");
+            });
+    }
+
+    function showDonationError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
     }
 </script>
 

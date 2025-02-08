@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Request Food - Annapravah{% endblock %}
+{% block activeRF %}active{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -35,25 +38,42 @@
                     </div>
                     
                     <div class="form-container">
-                        <form method="post" action="/request-food/create/" class="needs-validation" novalidate>
+                        <form method="post" action="{% url 'request_add' %}" class="needs-validation" novalidate>
                             {% csrf_token %}
                             <div class="row g-3">
                                 <!-- Location -->
                                 <div class="col-12">
                                     <div class="position-relative">
                                         <label for="location" class="form-label">Location (Where food is needed)</label>
-                                        <input type="text" class="form-control" id="location" name="location" required>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="location" name="location" required>
+                                            <button type="button" class="btn btn-primary" onclick="getLocation()">Use My Location</button>
+                                        </div>
                                         <div class="invalid-feedback">
                                             Please provide the location where food is needed.
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- Latitude and Longitude -->
+                                <div class="col-md-6">
+                                    <div class="position-relative">
+                                        <label for="latitude" class="form-label">Latitude</label>
+                                        <input type="text" class="form-control" id="latitude" name="latitude" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="position-relative">
+                                        <label for="longitude" class="form-label">Longitude</label>
+                                        <input type="text" class="form-control" id="longitude" name="longitude" readonly>
+                                    </div>
+                                </div>
+
                                 <!-- Number of People -->
                                 <div class="col-md-6">
                                     <div class="position-relative">
-                                        <label for="numberOfPeople" class="form-label">Number of People</label>
-                                        <input type="number" class="form-control" id="numberOfPeople" name="number_of_people" required>
+                                        <label for="numberOfPeople" class="form-label">Quantity</label>
+                                        <input type="float" class="form-control" id="quantity" name="quantity" required>
                                         <div class="invalid-feedback">
                                             Please provide the number of people to feed.
                                         </div>
@@ -77,9 +97,9 @@
                                         <label for="foodType" class="form-label">Type of Food Needed</label>
                                         <select class="form-select" id="foodType" name="food_type" required>
                                             <option value="">Select food type</option>
-                                            <option value="prepared">Prepared Food</option>
-                                            <option value="groceries">Groceries</option>
-                                            <option value="produce">Fresh Produce</option>
+                                            <option value="Prepared">Prepared Food</option>
+                                            <option value="Groceries">Groceries</option>
+                                            <option value="Produce">Fresh Produce</option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Please select the type of food needed.
@@ -110,7 +130,7 @@
                         <div class="overlay"></div>
                         <div class="header-content">
                             <h1>Past Requests</h1>
-                            <p>Track your previous food requests</p>
+                            <p>Track our previous food requests</p>
                         </div>
                     </div>
 
@@ -119,25 +139,19 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Organization</th>
-                                        <th>Location</th>
-                                        <th>Number of People</th>
-                                        <th>Status</th>
+                                        <th>Food Type</th>
+                                        <th>Quantity</th>
+                                        <th>Required on (UTC)</th>
+                                        <th>Created on (UTC)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for request in past_requests %}
+                                    {% for request in requests %}
                                     <tr>
+                                        <td>{{ request.food_type }}</td>
+                                        <td>{{ request.quantity }}</td>
+                                        <td>{{ request.preferred_datetime }}</td>
                                         <td>{{ request.created_at }}</td>
-                                        <td>{{ request.organization_name }}</td>
-                                        <td>{{ request.location }}</td>
-                                        <td>{{ request.number_of_people }}</td>
-                                        <td>
-                                            <span class="badge {% if request.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
-                                                {{ request.status }}
-                                            </span>
-                                        </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -163,7 +177,7 @@
         margin-top: 1rem;
     }
 
-    .past-donations-banner {
+    .past-requests-banner {
         background-image: url('https://images.unsplash.com/photo-1594708767771-a7502209ff51?auto=format&fit=crop&q=80');
     }
 
@@ -378,5 +392,49 @@
         transition: all 0.3s ease-in-out;
     }
 </style>
+
+<script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        
+        document.getElementById("latitude").value = latitude;
+        document.getElementById("longitude").value = longitude;
+        
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("location").value = data.display_name;
+            })
+            .catch(error => {
+                alert("Unable to fetch location details.");
+            });
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
+    }
+</script>
 
 {% endblock %}
