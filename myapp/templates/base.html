@@ -34,13 +34,13 @@
                             <a class="nav-link {% block activeHome %}{% endblock %}" href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'donor_dashboard' %}">Donor Dashboard</a>
+                            <a class="nav-link {% block activeDonor %}{% endblock %}" href="{% url 'donor_dashboard' %}">Donor Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'ai_matching' %}">AI Matching</a>
+                            <a class="nav-link {% block activeAI %}{% endblock %}" href="{% url 'ai_matching' %}">AI Matching</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logistics' %}">Logistics & Tracking</a>
+                            <a class="nav-link {% block activeLT %}{% endblock %}" href="{% url 'logistics' %}">Logistics & Tracking</a>
                         </li>
                     </ul>
                     
