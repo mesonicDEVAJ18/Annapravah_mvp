@@ -3,6 +3,7 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
+        <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
@@ -20,45 +21,81 @@
             </div>
         </nav>
 
+        <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="tab-content">
+                <!-- Add Donation Form -->
                 <div class="tab-pane fade show active" id="add-donation">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1>Add New Donation</h1>
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="background-color: #6c757d; color: white; border-radius: 8px;">
+                        <h1 class="fs-2 fw-bold" style="color: #ffffff;">Add New Donation</h1>
                     </div>
-                    <form method="post" action="/donations/create/">
+                    <form method="post" action="/donations/create/" class="needs-validation" novalidate>
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label">Food Type</label>
-                            <select name="food_type" class="form-select" required>
-                                <option value="">Select food type</option>
-                                <option value="prepared">Prepared Food</option>
-                                <option value="groceries">Groceries</option>
-                                <option value="produce">Fresh Produce</option>
-                            </select>
+                        <div class="row g-3">
+                            <!-- Food Type -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="food_type" class="form-label">Food Type</label>
+                                    <select name="food_type" class="form-select" required>
+                                        <option value="">Select food type</option>
+                                        <option value="prepared">Prepared Food</option>
+                                        <option value="groceries">Groceries</option>
+                                        <option value="produce">Fresh Produce</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select the food type.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="quantity" class="form-label">Quantity (kg)</label>
+                                    <input type="number" name="quantity" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please provide the quantity of food.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Expiry Date -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="expiry_date" class="form-label">Expiry Date</label>
+                                    <input type="date" name="expiry_date" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please provide the expiry date.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pickup Location -->
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <label for="location" class="form-label">Pickup Location</label>
+                                    <input type="text" name="location" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please provide the pickup location.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Quantity (kg)</label>
-                            <input type="number" name="quantity" class="form-control" required>
+
+                        <!-- Submit Button -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success w-100">Submit Donation</button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Expiry Date</label>
-                            <input type="date" name="expiry_date" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pickup Location</label>
-                            <input type="text" name="location" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-success">Submit Donation</button>
                     </form>
                 </div>
 
+                <!-- Past Donations Section -->
                 <div class="tab-pane fade" id="past-donations">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1>Past Donations</h1>
                     </div>
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -90,4 +127,89 @@
         </main>
     </div>
 </div>
+
+<!-- Custom CSS for Styling -->
+<style>
+    .sidebar {
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+    }
+
+    .nav-link.active {
+        font-weight: bold;
+        color: #0d6efd !important;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #f8f9fa; /* Off-white text color */
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+    }
+
+    .badge {
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    .bg-success {
+        background-color: #198754 !important;
+    }
+</style>
+
+<!-- Bootstrap Validation Script -->
+<script>
+    (function () {
+        'use strict'
+
+        var forms = document.querySelectorAll('.needs-validation')
+
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+
 {% endblock %}
