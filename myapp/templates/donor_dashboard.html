@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
@@ -21,106 +20,84 @@
             </div>
         </nav>
 
-        <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="tab-content">
-                <!-- Add Donation Form -->
                 <div class="tab-pane fade show active" id="add-donation">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="background-color: #6c757d; color: white; border-radius: 8px;">
-                        <h1 class="fs-2 fw-bold" style="color: #ffffff;">Add New Donation</h1>
+                    <div class="header-banner">
+                        <div class="overlay"></div>
+                        <div class="header-content">
+                            <h1>Add New Donation</h1>
+                            <p>Your contribution can make a difference</p>
+                        </div>
                     </div>
-                    <form method="post" action="/donations/create/" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        <div class="row g-3">
-                            <!-- Food Type -->
-                            <div class="col-md-6">
-                                <div class="position-relative">
-                                    <label for="food_type" class="form-label">Food Type</label>
-                                    <select name="food_type" class="form-select" required>
-                                        <option value="">Select food type</option>
-                                        <option value="prepared">Prepared Food</option>
-                                        <option value="groceries">Groceries</option>
-                                        <option value="produce">Fresh Produce</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Please select the food type.
-                                    </div>
-                                </div>
+                    
+                    <div class="form-container">
+                        <form method="post" action="/donations/create/">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label class="form-label">Food Type</label>
+                                <select name="food_type" class="form-select" required>
+                                    <option value="">Select food type</option>
+                                    <option value="prepared">Prepared Food</option>
+                                    <option value="groceries">Groceries</option>
+                                    <option value="produce">Fresh Produce</option>
+                                </select>
                             </div>
-
-                            <!-- Quantity -->
-                            <div class="col-md-6">
-                                <div class="position-relative">
-                                    <label for="quantity" class="form-label">Quantity (kg)</label>
-                                    <input type="number" name="quantity" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Please provide the quantity of food.
-                                    </div>
-                                </div>
+                            <div class="mb-4">
+                                <label class="form-label">Quantity (kg)</label>
+                                <input type="number" name="quantity" class="form-control" required>
                             </div>
-
-                            <!-- Expiry Date -->
-                            <div class="col-md-6">
-                                <div class="position-relative">
-                                    <label for="expiry_date" class="form-label">Expiry Date</label>
-                                    <input type="date" name="expiry_date" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Please provide the expiry date.
-                                    </div>
-                                </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="date" name="expiry_date" class="form-control" required>
                             </div>
-
-                            <!-- Pickup Location -->
-                            <div class="col-md-6">
-                                <div class="position-relative">
-                                    <label for="location" class="form-label">Pickup Location</label>
-                                    <input type="text" name="location" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Please provide the pickup location.
-                                    </div>
-                                </div>
+                            <div class="mb-4">
+                                <label class="form-label">Pickup Location</label>
+                                <input type="text" name="location" class="form-control" required>
                             </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success w-100">Submit Donation</button>
-                        </div>
-                    </form>
+                            <button type="submit" class="btn btn-success">Submit Donation</button>
+                        </form>
+                    </div>
                 </div>
 
-                <!-- Past Donations Section -->
                 <div class="tab-pane fade" id="past-donations">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1>Past Donations</h1>
+                    <div class="header-banner past-donations-banner">
+                        <div class="overlay"></div>
+                        <div class="header-content">
+                            <h1>Past Donations</h1>
+                            <p>Track your contribution history</p>
+                        </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Food Type</th>
-                                    <th>Quantity</th>
-                                    <th>Status</th>
-                                    <th>Claimed By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for donation in donations %}
-                                <tr>
-                                    <td>{{ donation.created_at }}</td>
-                                    <td>{{ donation.food_type }}</td>
-                                    <td>{{ donation.quantity }} kg</td>
-                                    <td>
-                                        <span class="badge {% if donation.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
-                                            {{ donation.status }}
-                                        </span>
-                                    </td>
-                                    <td>{{ donation.claimed_by|default:"Not claimed" }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Food Type</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                        <th>Claimed By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donation in donations %}
+                                    <tr>
+                                        <td>{{ donation.created_at }}</td>
+                                        <td>{{ donation.food_type }}</td>
+                                        <td>{{ donation.quantity }} kg</td>
+                                        <td>
+                                            <span class="badge {% if donation.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
+                                                {{ donation.status }}
+                                            </span>
+                                        </td>
+                                        <td>{{ donation.claimed_by|default:"Not claimed" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,88 +105,161 @@
     </div>
 </div>
 
-<!-- Custom CSS for Styling -->
 <style>
-    .sidebar {
-        background-color: #f8f9fa;
-        border-right: 1px solid #dee2e6;
+    .header-banner {
+        position: relative;
+        height: 200px;
+        background-image: url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
     }
 
-    .nav-link.active {
-        font-weight: bold;
-        color: #0d6efd !important;
+    .past-donations-banner {
+        background-image: url('https://images.unsplash.com/photo-1594708767771-a7502209ff51?auto=format&fit=crop&q=80');
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 1rem;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+        padding: 2rem;
+        color: white;
+    }
+
+    .header-content h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-content p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .form-container, .table-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar {
+        min-height: calc(100vh - 56px);
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        background-color: #f8f9fa;
+    }
+
+    .sidebar .nav-link {
+        color: #333;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 0.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar .nav-link:hover {
+        background-color: #e9ecef;
+    }
+
+    .sidebar .nav-link.active {
+        background-color: #198754;
+        color: white !important;
+    }
+
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
     }
 
     .form-label {
         font-weight: 500;
-        color: #f8f9fa; /* Off-white text color */
-    }
-
-    .form-control, .form-select {
-        border-radius: 8px;
-        border: 1px solid #ced4da;
-        padding: 10px;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+        margin-bottom: 0.5rem;
+        color: #495057;
     }
 
     .btn-success {
-        background-color: #28a745;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
         font-weight: 500;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        width: 100%;
     }
 
     .btn-success:hover {
-        background-color: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .table {
-        border-radius: 8px;
+        border-radius: 0.5rem;
         overflow: hidden;
     }
 
-    .table th, .table td {
-        padding: 12px;
+    .table thead {
+        background-color: #f8f9fa;
+    }
+
+    .table th {
+        font-weight: 600;
+        padding: 1rem;
+        color: #495057;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
     }
 
     .badge {
-        padding: 8px 12px;
-        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 2rem;
     }
 
     .bg-warning {
         background-color: #ffc107 !important;
+        color: #000;
     }
 
     .bg-success {
         background-color: #198754 !important;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            position: static;
+            height: auto;
+            padding-top: 0;
+        }
+
+        .header-banner {
+            height: 150px;
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+        }
     }
 </style>
-
-<!-- Bootstrap Validation Script -->
-<script>
-    (function () {
-        'use strict'
-
-        var forms = document.querySelectorAll('.needs-validation')
-
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
-</script>
-
 {% endblock %}
