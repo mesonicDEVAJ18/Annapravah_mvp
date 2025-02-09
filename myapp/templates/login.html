@@ -1,38 +1,234 @@
 {% extends 'base.html' %}
-{% load static %} 
 {% block title %}Login - Annapravah{% endblock %}
 
 {% block content %}
-<div class="container mt-5 pt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card shadow p-4">
-                <h2 class="text-center mb-4">Login</h2>
+<div class="auth-wrapper">
+    <div class="auth-side">
+        <div class="auth-content">
+            <h1>Welcome Back!</h1>
+            <p>Together we can make a difference in reducing food waste and helping those in need.</p>
+        </div>
+    </div>
+    <div class="auth-main">
+        <div class="auth-card">
+            <div class="brand-logo">
+                <i class="bi bi-heart-fill"></i>
+                <span>Annapravah</span>
+            </div>
+            <h2>Login</h2>
+            <p class="text-muted mb-4">Please login to continue</p>
+            
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
                 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control rounded-pill" id="username" name="username" required>
+                <div class="form-group">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="password">Password</label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control rounded-pill" id="password" name="password" required>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
-                </form>
-
-                <p class="text-center mt-3">Don't have an account? 
-                    <a href="{% url 'signup' %}">Sign up</a>
-                </p>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'signup' %}">Create Account</a></p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .auth-wrapper {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .auth-side {
+        background: linear-gradient(135deg, rgba(25,135,84,0.9) 0%, rgba(20,108,67,0.9) 100%),
+                    url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: white;
+    }
+
+    .auth-content {
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .auth-content h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-content p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .auth-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #f8f9fa;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 400px;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        color: #198754;
+    }
+
+    .brand-logo i {
+        font-size: 1.5rem;
+    }
+
+    .brand-logo span {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .auth-card h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #4a5568;
+    }
+
+    .input-group {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .input-group:focus-within {
+        border-color: #198754;
+        box-shadow: 0 0 0 3px rgba(25,135,84,0.1);
+    }
+
+    .input-group-text {
+        background-color: white;
+        border: none;
+        color: #718096;
+    }
+
+    .form-control {
+        border: none;
+        padding: 0.75rem;
+        background-color: white;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+    }
+
+    .forgot-link {
+        color: #198754;
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+
+    .forgot-link:hover {
+        text-decoration: underline;
+    }
+
+    .btn-primary {
+        background-color: #198754;
+        border: none;
+        padding: 0.75rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #146c43;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: #4a5568;
+    }
+
+    .auth-footer a {
+        color: #198754;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .auth-wrapper {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-side {
+            display: none;
+        }
+
+        .auth-main {
+            padding: 1rem;
+        }
+
+        .auth-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
 {% endblock %}
