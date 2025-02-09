@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Map - Annapravah{% endblock %}
+{% block activeMap %}active{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Map of Requests and Donations</h1>
+    <div id="map" style="height: 600px; border-radius: 10px;"></div>
+</div>
+
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet Marker Clustering -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize map centered at New Delhi
+    var map = L.map('map').setView([28.6139, 77.2090], 12);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker clusters for better visualization
+    var markers = L.markerClusterGroup();
+
+    // Define custom icons for Donations and Requests
+    var donationIcon = L.icon({
+        iconUrl: '{% static "images/donation-marker.png" %}',
+        iconSize: [30, 45],
+        iconAnchor: [15, 45],
+        popupAnchor: [0, -38]
+    });
+
+    var requestIcon = L.icon({
+        iconUrl: '{% static "images/request-marker.png" %}',
+        iconSize: [30, 45],
+        iconAnchor: [15, 45],
+        popupAnchor: [0, -38]
+    });
+
+    // Data for requests and donations
+    var locations = [
+        {% for donation in donations %}
+            { lat: {{ donation.latitude }}, lng: {{ donation.longitude }}, type: "donation", title: "{{ donation.title|escapejs }}" },
+        {% endfor %}
+        {% for req in requests %}
+            { lat: {{ req.latitude }}, lng: {{ req.longitude }}, type: "request", title: "{{ req.title|escapejs }}" },
+        {% endfor %}
+    ];
+
+    // Add markers dynamically
+    locations.forEach(function (location) {
+        if (!isNaN(location.lat) && !isNaN(location.lng)) {
+            var marker = L.marker([location.lat, location.lng], {
+                icon: location.type === "donation" ? donationIcon : requestIcon
+            }).bindPopup(`<strong>${location.type === "donation" ? "Donation" : "Request"}:</strong> ${location.title}`);
+            
+            markers.addLayer(marker);
+        }
+    });
+
+    map.addLayer(markers);
+    map.fitBounds(markers.getBounds(), { padding: [50, 50] }); // Auto-center the map
+});
+</script>
+{% endblock %}

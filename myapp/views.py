@@ -209,3 +209,13 @@ def deliver_happiness(request):
 
 def partner_ngo(request):
     return render(request, 'partner_ngo.html')
+
+def map(request):
+    donations = Donation.objects.all()
+    requests = Request.objects.all()
+
+    context = {
+        'donations': donations,
+        'requests': requests,
+    }
+    return render(request, 'map.html', context)

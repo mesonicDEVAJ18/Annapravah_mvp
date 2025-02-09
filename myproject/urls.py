@@ -37,4 +37,6 @@ urlpatterns = [
     path('network/', views.network, name='network'),
     path('deliver_happiness/', views.deliver_happiness, name='deliver_happiness'),
     path('partner_ngo/', views.partner_ngo, name='partner_ngo'),
+
+    path('map/', views.map, name='map'),
 ]
