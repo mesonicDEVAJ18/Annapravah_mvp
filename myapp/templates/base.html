@@ -4,6 +4,17 @@
     {% load static %} 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="Annapravah - A platform dedicated to providing food for young kids through community donations and logistics support.">
+    <meta name="keywords" content="food donation, NGO, hunger relief, child nutrition, community service">
+    <meta name="author" content="Annapravah">
+    
+    <!-- Open Graph Meta Tags (For Facebook & LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}Annapravah{% endblock %}">
+    <meta property="og:description" content="Join us in fighting hunger by donating food and supporting logistics for underprivileged children.">
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <title>
     {% block title %}{% endblock %}
     </title>
