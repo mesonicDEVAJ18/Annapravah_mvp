@@ -4,33 +4,111 @@
 {% block activeMap %}active{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center my-4">Map of Requests and Donations</h1>
-    <div id="map" style="height: 600px; border-radius: 10px;"></div>
+<div class="container-fluid px-4 py-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5 p-4 rounded-lg" style="background: linear-gradient(45deg, #1a237e, #283593);">
+        <h1 class="mb-2" style="font-family: 'Inter', sans-serif; font-weight: 700; color: white;">
+            Map Overview
+        </h1>
+        <div style="font-size: 1rem; color: rgba(255, 255, 255, 0.8); font-weight: normal;">
+            View all requests and donations
+        </div>
+    </div>
+
+    <!-- Map Container with Controls -->
+    <div class="row">
+        <div class="col-12 col-md-9">
+            <div class="position-relative">
+                <div id="map" style="height: 700px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);"></div>
+                
+                <!-- Map Controls -->
+                <div class="position-absolute top-4 end-4 d-flex gap-2" style="z-index: 1000; margin: 16px;">
+                    <button id="zoomIn" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button id="zoomOut" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button id="recenter" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend and Stats Panel -->
+        <div class="col-12 col-md-3">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 16px;">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4" style="color: #1a237e; font-weight: 600;">Map Legend</h3>
+                    
+                    <!-- Legend Items -->
+                    <div class="legend-items mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/donation-marker.png' %}" alt="Donation" style="height: 30px; margin-right: 10px;">
+                            <span style="font-weight: 500;">Donations Available</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/request-marker.png' %}" alt="Request" style="height: 30px; margin-right: 10px;">
+                            <span style="font-weight: 500;">Food Requests</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats mt-4">
+                        <h4 class="mb-3" style="color: #1a237e;">Quick Stats</h4>
+                        <div class="stat-box p-3 mb-3" style="background: rgba(0, 123, 255, 0.1); border-radius: 12px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span style="font-weight: 500;">Total Donations</span>
+                                <span class="badge bg-primary">{{ donations|length }}</span>
+                            </div>
+                        </div>
+                        <div class="stat-box p-3" style="background: rgba(40, 167, 69, 0.1); border-radius: 12px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span style="font-weight: 500;">Total Requests</span>
+                                <span class="badge bg-success">{{ requests|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Leaflet CSS & JS -->
+<!-- Styles and Scripts -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<!-- Leaflet Marker Clustering -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialize map centered at New Delhi
-    var map = L.map('map').setView([28.6139, 77.2090], 12);
+    // Initialize map with custom controls
+    var map = L.map('map', {
+        zoomControl: false
+    }).setView([28.6139, 77.2090], 12);
 
-    // Add OpenStreetMap tiles
+    // Custom styled tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors',
+        className: 'map-tiles'
     }).addTo(map);
 
-    // Marker clusters for better visualization
-    var markers = L.markerClusterGroup();
+    // Enhanced marker clusters
+    var markers = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: true,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: 16
+    });
 
-    // Define custom icons for Donations and Requests
+    // Custom icons with enhanced styling
     var donationIcon = L.icon({
         iconUrl: '{% static "images/donation-marker.png" %}',
         iconSize: [30, 45],
@@ -45,29 +123,93 @@ document.addEventListener("DOMContentLoaded", function () {
         popupAnchor: [0, -38]
     });
 
-    // Data for requests and donations
+    // Enhanced location data handling
     var locations = [
         {% for donation in donations %}
-            { lat: {{ donation.latitude }}, lng: {{ donation.longitude }}, type: "donation", title: "{{ donation.title|escapejs }}" },
+            {
+                lat: {{ donation.latitude }},
+                lng: {{ donation.longitude }},
+                type: "donation",
+                title: "{{ donation.title|escapejs }}",
+                address: "{{ donation.address|escapejs }}"
+            },
         {% endfor %}
         {% for req in requests %}
-            { lat: {{ req.latitude }}, lng: {{ req.longitude }}, type: "request", title: "{{ req.title|escapejs }}" },
+            {
+                lat: {{ req.latitude }},
+                lng: {{ req.longitude }},
+                type: "request",
+                title: "{{ req.title|escapejs }}",
+                address: "{{ req.address|escapejs }}"
+            },
         {% endfor %}
     ];
 
-    // Add markers dynamically
+    // Enhanced marker creation with better popups
     locations.forEach(function (location) {
         if (!isNaN(location.lat) && !isNaN(location.lng)) {
             var marker = L.marker([location.lat, location.lng], {
                 icon: location.type === "donation" ? donationIcon : requestIcon
-            }).bindPopup(`<strong>${location.type === "donation" ? "Donation" : "Request"}:</strong> ${location.title}`);
+            }).bindPopup(`
+                <div class="custom-popup">
+                    <h5 style="color: ${location.type === 'donation' ? '#1a237e' : '#28a745'}; margin-bottom: 8px;">
+                        ${location.type === 'donation' ? 'Donation Available' : 'Food Request'}
+                    </h5>
+                    <p style="margin-bottom: 5px;"><strong>${location.title}</strong></p>
+                    <p style="margin-bottom: 0; font-size: 0.9em; color: #666;">
+                        <i class="fas fa-location-dot me-1"></i> ${location.address}
+                    </p>
+                </div>
+            `);
             
             markers.addLayer(marker);
         }
     });
 
     map.addLayer(markers);
-    map.fitBounds(markers.getBounds(), { padding: [50, 50] }); // Auto-center the map
+    map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+
+    // Custom controls
+    document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
+    document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+    document.getElementById('recenter').addEventListener('click', () => {
+        map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+    });
 });
 </script>
+
+<style>
+.map-tiles {
+    filter: saturate(0.8) brightness(1.1);
+}
+
+.custom-popup {
+    padding: 10px;
+    font-family: 'Inter', sans-serif;
+    min-width: 200px;
+}
+
+.stat-box {
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 8px 12px;
+}
+
+/* Cluster Customization */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+    background-color: rgba(26, 35, 126, 0.1);
+}
+
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+    background-color: rgba(26, 35, 126, 0.8);
+    color: white;
+}
+</style>
 {% endblock %}
