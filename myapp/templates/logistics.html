@@ -1,21 +1,52 @@
 {% extends 'base.html' %}
-{% block title %}Logistics & Tracking - Annapravah{% endblock %}
+{% load static %} 
+{% block title %}Logistics - Annapravah{% endblock %}
+{% block activeL %}active{% endblock %}
+
 {% block content %}
-<div class="container mt-5 pt-5">
-    <h2>Logistics & Tracking</h2>
-    <p>Real-time GPS tracking and pickup notifications.</p>
-    <button onclick="redirectToNavigate()">Show Route</button>
+<div class="hero-section text-center text-white d-flex align-items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)); background-size: cover; background-position: center; padding: 120px 0;">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Logistics Dashboard</h1>
+        <p class="lead">Manage and review food donation matches.</p>
+    </div>
 </div>
 
-<script>
-    function redirectToNavigate() {
-        // Arbitrary coordinates in New Delhi, India
-        const pickupLat = 28.6139;
-        const pickupLon = 77.2090;
-        const deliveryLat = 28.7041;
-        const deliveryLon = 77.1025;
-
-        window.location.href = `/navigate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&deliveryLat=${deliveryLat}&deliveryLon=${deliveryLon}`;
-    }
-</script>
+<!-- Matches Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-5">Donation-Request Matches</h2>
+    {% if matches %}
+        <div class="row">
+            {% for req, don, score in matches %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <!-- Request Details -->
+                            <h4 class="card-title">Request: {{ req.food_type }} ({{ req.quantity }} kg)</h4>
+                            <p class="card-text"><strong>Location:</strong> {{ req.location }}</p>
+                            <p class="card-text">
+                                <strong>Preferred Date:</strong> 
+                                {{ req.preferred_datetime|date:"M d, Y H:i" }}
+                            </p>
+                            <hr>
+                            <!-- Donation Details -->
+                            <h5 class="card-title">Donation: {{ don.food_type }} ({{ don.quantity }} kg)</h5>
+                            <p class="card-text"><strong>Location:</strong> {{ don.current_location }}</p>
+                            <p class="card-text">
+                                <strong>Expiry Date:</strong> 
+                                {{ don.expiry_date|date:"M d, Y" }}
+                            </p>
+                            <p class="text-muted">
+                                <strong>Match Score:</strong> {{ score|floatformat:2 }}
+                            </p>
+                            <!-- Navigate Button (sends request and donation IDs to the navigate view) -->
+                            <a href="{% url 'navigate' req.id don.id %}" class="btn btn-primary mt-3">Navigate</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">No matches found.</p>
+    {% endif %}
+</div>
 {% endblock %}

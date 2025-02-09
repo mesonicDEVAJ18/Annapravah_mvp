@@ -23,18 +23,17 @@ urlpatterns = [
     
     path('donor-dashboard/', views.donor_dashboard, name='donor_dashboard'),
     path('donation_add/', views.donation_add, name='donation_add'),
-    
-    path('logistics/', views.logistics, name='logistics'),
-    path('admin-panel/', views.admin_panel, name='admin_panel'),
 
     path('request-food/', views.request_food, name='request_food'),
     path('request_add/', views.request_add, name='request_add'),
+
+    path('logistics/', views.logistics, name='logistics'),
+    path('navigate/<int:req_id>/<int:don_id>/', views.navigate, name='navigate'),
 
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
 
-    path('navigate/', views.navigate, name='navigate'),
     path('network/', views.network, name='network'),
     path('deliver_happiness/', views.deliver_happiness, name='deliver_happiness'),
     path('partner_ngo/', views.partner_ngo, name='partner_ngo'),

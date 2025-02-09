@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import DonationForm, RequestForm
 from .models import Donation, Request
 import logging
+from datetime import datetime
+from geopy.distance import geodesic
 
 logger = logging.getLogger(__name__)
 
@@ -97,12 +99,6 @@ def donation_add(request):
     }
     return render(request, 'donor_dashboard.html', context)
 
-def logistics(request):
-    return render(request, 'logistics.html')
-
-def admin_panel(request):
-    return render(request, 'admin_panel.html')
-
 def request_food(request):
     requests = Request.objects.all()
     print(f"📊 Fetching all requests: {requests}")  # Debugging print
@@ -132,8 +128,78 @@ def request_add(request):
     }
     return render(request, 'request_food.html', context)
 
-def navigate(request):
-    return render(request, 'navigate.html')
+def compute_match_score(donation, req, weights):
+    today = datetime.today().date()
+    expiry_diff = abs((donation.expiry_date - today).days)
+    quantity_diff = abs(donation.quantity - req.quantity)
+    
+    donation_coords = (float(donation.latitude), float(donation.longitude))
+    request_coords = (float(req.latitude), float(req.longitude))
+    distance = geodesic(donation_coords, request_coords).km
+
+    score = weights['expiry'] * expiry_diff + weights['quantity'] * quantity_diff + weights['distance'] * distance
+    return score
+
+def find_best_matches(requests, donations):
+    # Define weights for each attribute. Adjust as needed.
+    weights = {
+        'expiry': 0.5,    # weight for expiry difference (days)
+        'quantity': 0.3,  # weight for quantity difference (kg)
+        'distance': 0.2   # weight for geographic distance (km)
+    }
+    matches = []
+    
+    for req in requests:
+        # Only consider donations with the same food type.
+        matching_donations = [don for don in donations if don.food_type == req.food_type]
+        if not matching_donations:
+            continue
+        
+        scored_donations = []
+        for don in matching_donations:
+            score = compute_match_score(don, req, weights)
+            scored_donations.append((don, score))
+        
+        # Sort donations by score (lowest first)
+        scored_donations.sort(key=lambda item: item[1])
+        best_donation, best_score = scored_donations[0]
+        matches.append((req, best_donation, best_score))
+    
+    # Optionally, sort all matches by the score if you want an overall priority order.
+    matches.sort(key=lambda item: item[2])
+    return matches
+
+def logistics(request):
+    requests = Request.objects.all()
+    donations = Donation.objects.all()
+    matches = find_best_matches(requests, donations)
+    context = {
+        'matches': matches
+    }
+    return render(request, 'logistics.html', context)
+
+def navigate(request, req_id, don_id):
+    # Retrieve the Request and Donation objects or return 404 if not found.
+    req_obj = get_object_or_404(Request, id=req_id)
+    don_obj = get_object_or_404(Donation, id=don_id)
+    
+    # Optionally, calculate the distance between the donation and request.
+    # Here we treat donation's location as the pickup point and request's location as the delivery point.
+    if (req_obj.latitude is not None and req_obj.longitude is not None and
+        don_obj.latitude is not None and don_obj.longitude is not None):
+        req_coords = (float(req_obj.latitude), float(req_obj.longitude))
+        don_coords = (float(don_obj.latitude), float(don_obj.longitude))
+        distance = geodesic(don_coords, req_coords).km
+    else:
+        distance = None
+    
+    context = {
+        'request_obj': req_obj,
+        'donation_obj': don_obj,
+        'distance': distance,  # If you need to display this on the page as well.
+    }
+    
+    return render(request, 'navigate.html', context)
 
 def network(request):
     return render(request, 'network.html')

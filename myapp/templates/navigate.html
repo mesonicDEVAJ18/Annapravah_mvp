@@ -1,6 +1,6 @@
-{% extends "base.html" %}
-
-{% block title %}Navigate{% endblock %}
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Navigate - Annapravah{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -142,20 +142,21 @@
     let map, pickupMarker, deliveryMarker, routeLine;
 
     document.addEventListener("DOMContentLoaded", function () {
+        // Initialize map with a default center
         map = L.map('map').setView([28.6139, 77.2090], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        const params = new URLSearchParams(window.location.search);
-        const pickupLat = params.get("pickupLat");
-        const pickupLon = params.get("pickupLon");
-        const deliveryLat = params.get("deliveryLat");
-        const deliveryLon = params.get("deliveryLon");
+        // Get coordinates from Django context variables (embedded as template variables)
+        const pickupLat = parseFloat("{{ donation_obj.latitude }}");
+        const pickupLon = parseFloat("{{ donation_obj.longitude }}");
+        const deliveryLat = parseFloat("{{ request_obj.latitude }}");
+        const deliveryLon = parseFloat("{{ request_obj.longitude }}");
 
-        // Define custom marker icon
-        const pickupIcon = L.icon({
+        // Define custom marker icon (for both pickup and delivery)
+        const markerIcon = L.icon({
             iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
@@ -163,30 +164,23 @@
             shadowSize: [41, 41]
         });
 
-        const deliveryIcon = L.icon({
-            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
+        if (!isNaN(pickupLat) && !isNaN(pickupLon) && !isNaN(deliveryLat) && !isNaN(deliveryLon)) {
+            const pickupCoords = [pickupLat, pickupLon];
+            const deliveryCoords = [deliveryLat, deliveryLon];
 
-        if (pickupLat && pickupLon && deliveryLat && deliveryLon) {
-            const pickupCoords = [parseFloat(pickupLat), parseFloat(pickupLon)];
-            const deliveryCoords = [parseFloat(deliveryLat), parseFloat(deliveryLon)];
-
-            pickupMarker = L.marker(pickupCoords, { icon: pickupIcon })
+            pickupMarker = L.marker(pickupCoords, { icon: markerIcon })
                 .addTo(map)
                 .bindPopup("Pickup Point");
 
-            deliveryMarker = L.marker(deliveryCoords, { icon: deliveryIcon })
+            deliveryMarker = L.marker(deliveryCoords, { icon: markerIcon })
                 .addTo(map)
                 .bindPopup("Delivery Point");
 
+            // Use OSRM to calculate the route between the two points
             fetch(`https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${deliveryLon},${deliveryLat}?overview=full&geometries=geojson&steps=true`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.routes.length > 0) {
+                    if (data.routes && data.routes.length > 0) {
                         const route = data.routes[0];
                         const routeCoords = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
 
