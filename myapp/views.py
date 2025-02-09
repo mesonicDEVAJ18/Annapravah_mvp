@@ -7,6 +7,9 @@ from .models import Donation, Request
 import logging
 from datetime import datetime
 from geopy.distance import geodesic
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A5
+from reportlab.pdfgen import canvas
 
 logger = logging.getLogger(__name__)
 
@@ -200,6 +203,84 @@ def navigate(request, req_id, don_id):
     }
     
     return render(request, 'navigate.html', context)
+
+def generate_certificate(request, request_id, donation_id):
+    # Retrieve the Donation and Request objects
+    donation = get_object_or_404(Donation, id=donation_id)
+    food_request = get_object_or_404(Request, id=request_id)
+
+    # Set up HTTP response with inline disposition so the PDF opens in a new tab
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'inline; filename="Donation_Certificate_{donation.id}_{food_request.id}.pdf"'
+    )
+
+    # Use A5 page size for a compact certificate design
+    pdf = canvas.Canvas(response, pagesize=A5)
+    width, height = A5  # A5 dimensions (approx. 420 x 595 points)
+    margin = 20
+
+    # -----------------------------------------------
+    # Header Section with Background Color
+    # -----------------------------------------------
+    pdf.setFillColorRGB(0.1, 0.1, 0.6)  # Blue header background
+    pdf.rect(0, height - 60, width, 60, fill=1, stroke=0)
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.setFillColorRGB(1, 1, 1)  # White text
+    pdf.drawCentredString(width / 2, height - 40, "Donation Certificate")
+
+    # -----------------------------------------------
+    # Compact Content Area
+    # -----------------------------------------------
+    pdf.setFillColorRGB(0, 0, 0)  # Black text
+    pdf.setFont("Helvetica", 10)
+    text_y = height - 70  # Start just below the header
+    line_gap = 12
+
+    pdf.drawString(margin, text_y, f"Cert No: CERT-{donation.id}-{food_request.id}")
+    text_y -= line_gap
+
+    donation_details = f"{donation.get_food_type_display()} | {donation.quantity} kg"
+    pdf.drawString(margin, text_y, f"Food: {donation_details}")
+    text_y -= line_gap
+
+    pdf.drawString(margin, text_y, f"Expiry: {donation.expiry_date.strftime('%Y-%m-%d')}")
+    text_y -= line_gap
+
+    pickup_location = donation.current_location if donation.current_location else "N/A"
+    pdf.drawString(margin, text_y, f"Pickup: {pickup_location}")
+    text_y -= line_gap
+
+    pdf.drawString(margin, text_y, f"Recipient: {food_request.location}")
+    text_y -= line_gap
+
+    today_str = datetime.today().strftime('%Y-%m-%d')
+    pdf.drawString(margin, text_y, f"Issued: {today_str}")
+    text_y -= line_gap
+
+    # If coordinates are available, calculate and display the distance
+    if donation.latitude and donation.longitude and food_request.latitude and food_request.longitude:
+        donation_coords = (float(donation.latitude), float(donation.longitude))
+        request_coords = (float(food_request.latitude), float(food_request.longitude))
+        distance = round(geodesic(donation_coords, request_coords).km, 2)
+        pdf.drawString(margin, text_y, f"Distance: {distance} km")
+        text_y -= line_gap
+
+    # -----------------------------------------------
+    # Footer Section with Background Color
+    # -----------------------------------------------
+    pdf.setFillColorRGB(0.9, 0.9, 0.9)  # Light grey footer
+    pdf.rect(0, 0, width, 30, fill=1, stroke=0)
+    pdf.setFillColorRGB(0, 0, 0)
+    pdf.setFont("Helvetica-Oblique", 8)
+    pdf.drawCentredString(width / 2, 10, "Thank you for your generosity!")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawRightString(width - margin, 35, "Authorized Signature")
+
+    pdf.showPage()
+    pdf.save()
+    return response
+
 
 def network(request):
     return render(request, 'network.html')

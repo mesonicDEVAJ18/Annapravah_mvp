@@ -21,6 +21,15 @@
                     <div class="title">Distance</div>
                     <div id="distance" class="answer">--</div>
                 </div>
+                
+                <!-- Certificate Generation Button -->
+                <div class="text-center mt-3">
+                    <a href="{% url 'generate_certificate' request_obj.id donation_obj.id %}" 
+                        target="_blank" 
+                        class="btn btn-success">
+                        Generate Certificate
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -28,134 +37,23 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-<style>
-    /* Custom Font for a more professional feel */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .navigate-header {
-        background: #222;
-        color: #f8f9fa;
-        padding: 15px;
-        border-radius: 10px;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    /* Route Info Panel Styling */
-    .route-info {
-        padding: 20px;
-        background: #e0e0e0; /* Greyish background for modern look */
-        color: #333;
-        border-radius: 12px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        height: 100%; /* Expands to fill the space */
-        position: relative;
-        border: 1px solid #ddd;
-    }
-
-    .route-info h3 {
-        color: #333;
-        font-size: 26px;
-        font-weight: 600;
-        margin-bottom: 20px;
-        text-align: left;
-    }
-
-    /* Sub-boxes for Estimated Time & Distance */
-    .sub-box {
-        background: #ffffff;
-        color: #333;
-        padding: 18px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-    }
-
-    .sub-box .title {
-        font-weight: 600;
-        font-size: 20px;
-        margin-bottom: 8px;
-        color: #555;
-    }
-
-    .sub-box .answer {
-        font-size: 18px;
-        color: #28a745; /* Green color for the answer */
-    }
-
-    /* Specific Background Colors for Fields */
-    .estimated-time {
-        background-color: #e8f5e9; /* Light green background */
-        border-left: 5px solid #28a745; /* Bold green border on the left */
-    }
-
-    .distance {
-        background-color: #e3f2fd; /* Light blue background */
-        border-left: 5px solid #2196f3; /* Bold blue border on the left */
-    }
-
-    /* Media Query for Smaller Screens */
-    @media (max-width: 768px) {
-        .row {
-            flex-direction: column; /* Stack the map and route info vertically */
-        }
-
-        #map {
-            height: 300px; /* Reduce map size on smaller screens */
-        }
-
-        .route-info {
-            margin-top: 20px;
-            flex: 1 1 100%;
-        }
-
-        .sub-box {
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        .route-info h3 {
-            font-size: 22px;
-        }
-
-        .sub-box .title {
-            font-size: 18px;
-        }
-
-        .sub-box .answer {
-            font-size: 16px;
-        }
-    }
-</style>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
     let map, pickupMarker, deliveryMarker, routeLine;
 
     document.addEventListener("DOMContentLoaded", function () {
-        // Initialize map with a default center
         map = L.map('map').setView([28.6139, 77.2090], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Get coordinates from Django context variables (embedded as template variables)
         const pickupLat = parseFloat("{{ donation_obj.latitude }}");
         const pickupLon = parseFloat("{{ donation_obj.longitude }}");
         const deliveryLat = parseFloat("{{ request_obj.latitude }}");
         const deliveryLon = parseFloat("{{ request_obj.longitude }}");
 
-        // Define custom marker icon (for both pickup and delivery)
         const markerIcon = L.icon({
             iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
             iconSize: [25, 41],
@@ -168,15 +66,9 @@
             const pickupCoords = [pickupLat, pickupLon];
             const deliveryCoords = [deliveryLat, deliveryLon];
 
-            pickupMarker = L.marker(pickupCoords, { icon: markerIcon })
-                .addTo(map)
-                .bindPopup("Pickup Point");
+            pickupMarker = L.marker(pickupCoords, { icon: markerIcon }).addTo(map).bindPopup("Pickup Point");
+            deliveryMarker = L.marker(deliveryCoords, { icon: markerIcon }).addTo(map).bindPopup("Delivery Point");
 
-            deliveryMarker = L.marker(deliveryCoords, { icon: markerIcon })
-                .addTo(map)
-                .bindPopup("Delivery Point");
-
-            // Use OSRM to calculate the route between the two points
             fetch(`https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${deliveryLon},${deliveryLat}?overview=full&geometries=geojson&steps=true`)
                 .then(response => response.json())
                 .then(data => {

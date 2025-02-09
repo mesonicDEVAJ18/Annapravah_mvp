@@ -29,6 +29,7 @@ urlpatterns = [
 
     path('logistics/', views.logistics, name='logistics'),
     path('navigate/<int:req_id>/<int:don_id>/', views.navigate, name='navigate'),
+    path('certificate/<int:request_id>/<int:donation_id>/', views.generate_certificate, name='generate_certificate'),
 
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
