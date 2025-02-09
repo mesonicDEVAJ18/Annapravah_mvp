@@ -1,73 +1,177 @@
 {% extends 'base.html' %}
-{% load static %} 
+{% load static %}
+
 {% block title %}Navigate - Annapravah{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center mt-4 navigate-header">Navigate</h1>
-    <div class="row mt-4">
+<div class="container-fluid px-4 py-5">
+    <div class="text-center mb-5 p-4 rounded-lg" style="background: linear-gradient(45deg, #145c32, #1d8548);">
+        <h1 class="navigate-header mb-2" style="font-family: 'Inter', sans-serif; font-weight: 700; color: white;">
+            Navigate
+        </h1>
+        <div style="font-size: 1rem; color: rgba(255, 255, 255, 0.8); font-weight: normal;">
+            Track your delivery route
+        </div>
+    </div>
+    
+    <div class="row g-4">
         <!-- Map Column -->
-        <div id="map" class="col-12 col-md-8" style="height: 500px;"></div>
+        <div class="col-12 col-lg-8">
+            <div class="position-relative">
+                <div id="map" style="height: 600px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);"></div>
+                
+                <!-- Map Controls - Now Horizontal -->
+                <div class="position-absolute top-4 end-4 d-flex gap-2" style="z-index: 1000; margin: 16px;">
+                    <button id="zoomIn" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button id="zoomOut" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button id="recenter" class="btn btn-light shadow-sm" style="border-radius: 50%; width: 40px; height: 40px;">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
         
         <!-- Route Information Panel -->
-        <div id="route-info" class="col-12 col-md-4 mt-4 mt-md-0">
-            <div class="route-info">
-                <h3>Route Information</h3>
-                <div class="sub-box estimated-time">
-                    <div class="title">Estimated Time</div>
-                    <div id="duration" class="answer">--</div>
-                </div>
-                <div class="sub-box distance">
-                    <div class="title">Distance</div>
-                    <div id="distance" class="answer">--</div>
-                </div>
-                
-                <!-- Certificate Generation Button -->
-                <div class="text-center mt-3">
-                    <a href="{% url 'generate_certificate' request_obj.id donation_obj.id %}" 
-                        target="_blank" 
-                        class="btn btn-success">
-                        Generate Certificate
-                    </a>
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-lg border-0 h-100" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 16px;">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4" style="color: #145c32; font-weight: 600;">Route Details</h3>
+                    
+                    <!-- Location Details - Now Above Stats -->
+                    <div class="location-details mb-4">
+                        <div class="pickup-point mb-3 p-3" style="background: rgba(0, 0, 0, 0.05); border-radius: 12px;">
+                            <h6 class="mb-2" style="color: #145c32;">
+                                <i class="fas fa-map-marker-alt me-2"></i>Pickup Point
+                            </h6>
+                            <p class="mb-1"><strong>Address:</strong></p>
+                            <p class="mb-0 text-muted">{{ donation_obj.address }}</p>
+                            <p class="mb-0 mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-location-dot me-1"></i>
+                                    {{ donation_obj.latitude }}, {{ donation_obj.longitude }}
+                                </small>
+                            </p>
+                        </div>
+                        
+                        <div class="delivery-point p-3" style="background: rgba(0, 0, 0, 0.05); border-radius: 12px;">
+                            <h6 class="mb-2" style="color: #145c32;">
+                                <i class="fas fa-flag-checkered me-2"></i>Delivery Point
+                            </h6>
+                            <p class="mb-1"><strong>Address:</strong></p>
+                            <p class="mb-0 text-muted">{{ request_obj.address }}</p>
+                            <p class="mb-0 mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-location-dot me-1"></i>
+                                    {{ request_obj.latitude }}, {{ request_obj.longitude }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="route-stats mb-4">
+                        <div class="stat-box p-3 mb-3" style="background: rgba(0, 123, 255, 0.1); border-radius: 12px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="stat-label">
+                                    <i class="fas fa-clock me-2" style="color: #007bff;"></i>
+                                    <span style="font-weight: 500; color: #495057;">Estimated Time</span>
+                                </div>
+                                <div id="duration" class="stat-value" style="font-size: 1.25rem; font-weight: 600; color: #007bff;">--</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-box p-3 mb-4" style="background: rgba(40, 167, 69, 0.1); border-radius: 12px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="stat-label">
+                                    <i class="fas fa-route me-2" style="color: #28a745;"></i>
+                                    <span style="font-weight: 500; color: #495057;">Distance</span>
+                                </div>
+                                <div id="distance" class="stat-value" style="font-size: 1.25rem; font-weight: 600; color: #28a745;">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificate Generation Button -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'generate_certificate' request_obj.id donation_obj.id %}" target="_blank" 
+                           class="btn btn-primary btn-lg w-100 shadow-sm" 
+                           style="border-radius: 12px; background: linear-gradient(45deg, #145c32, #1c8748); border: none; padding: 12px 24px;">
+                            <i class="fas fa-certificate me-2"></i>Generate Certificate
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Rest of the code remains the same -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+    // Previous JavaScript code remains the same
     let map, pickupMarker, deliveryMarker, routeLine;
 
     document.addEventListener("DOMContentLoaded", function () {
-        map = L.map('map').setView([28.6139, 77.2090], 13);
+        map = L.map('map', {
+            zoomControl: false
+        }).setView([28.6139, 77.2090], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            attribution: '© OpenStreetMap contributors',
+            className: 'map-tiles'
         }).addTo(map);
+
+        const pickupIcon = L.divIcon({
+            html: '<i class="fas fa-map-marker-alt fa-2x" style="color: #1a237e;"></i>',
+            className: 'custom-div-icon',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20]
+        });
+
+        const deliveryIcon = L.divIcon({
+            html: '<i class="fas fa-flag-checkered fa-2x" style="color: #28a745;"></i>',
+            className: 'custom-div-icon',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20]
+        });
 
         const pickupLat = parseFloat("{{ donation_obj.latitude }}");
         const pickupLon = parseFloat("{{ donation_obj.longitude }}");
         const deliveryLat = parseFloat("{{ request_obj.latitude }}");
         const deliveryLon = parseFloat("{{ request_obj.longitude }}");
 
-        const markerIcon = L.icon({
-            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
-
         if (!isNaN(pickupLat) && !isNaN(pickupLon) && !isNaN(deliveryLat) && !isNaN(deliveryLon)) {
             const pickupCoords = [pickupLat, pickupLon];
             const deliveryCoords = [deliveryLat, deliveryLon];
 
-            pickupMarker = L.marker(pickupCoords, { icon: markerIcon }).addTo(map).bindPopup("Pickup Point");
-            deliveryMarker = L.marker(deliveryCoords, { icon: markerIcon }).addTo(map).bindPopup("Delivery Point");
+            // Enhanced popups with full address information
+            pickupMarker = L.marker(pickupCoords, { icon: pickupIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class='custom-popup'>
+                        <strong>Pickup Point</strong><br>
+                        ${pickupLat}, ${pickupLon}<br>
+                        <small>${"{{ donation_obj.address }}"}</small>
+                    </div>
+                `);
+            
+            deliveryMarker = L.marker(deliveryCoords, { icon: deliveryIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class='custom-popup'>
+                        <strong>Delivery Point</strong><br>
+                        ${deliveryLat}, ${deliveryLon}<br>
+                        <small>${"{{ request_obj.address }}"}</small>
+                    </div>
+                `);
 
             fetch(`https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${deliveryLon},${deliveryLat}?overview=full&geometries=geojson&steps=true`)
                 .then(response => response.json())
@@ -77,17 +181,88 @@
                         const routeCoords = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
 
                         if (routeLine) map.removeLayer(routeLine);
-                        routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
-                        map.fitBounds(routeLine.getBounds());
+                        
+                        routeLine = L.polyline(routeCoords, {
+                            color: '#1a237e',
+                            weight: 4,
+                            opacity: 0.8,
+                            lineJoin: 'round'
+                        }).addTo(map);
 
-                        document.getElementById("duration").innerText = `${(route.duration / 60).toFixed(2)} min`;
-                        document.getElementById("distance").innerText = `${(route.distance / 1000).toFixed(2)} km`;
+                        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+
+                        animateValue("duration", 0, route.duration / 60, 1000, "min");
+                        animateValue("distance", 0, route.distance / 1000, 1000, "km");
                     }
                 })
-                .catch(error => console.error("Error fetching route data:", error));
+                .catch(error => {
+                    console.error("Error fetching route data:", error);
+                    alert("Unable to fetch route data. Please try again later.");
+                });
         } else {
-            alert("Invalid or missing coordinates.");
+            alert("Invalid or missing coordinates. Please check the location data.");
         }
+
+        document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
+        document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+        document.getElementById('recenter').addEventListener('click', () => {
+            if (routeLine) {
+                map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+            }
+        });
     });
+
+    function animateValue(elementId, start, end, duration, unit) {
+        const element = document.getElementById(elementId);
+        const range = end - start;
+        const minTimer = 50;
+        let stepTime = Math.abs(Math.floor(duration / range));
+        stepTime = Math.max(stepTime, minTimer);
+        const startTime = new Date().getTime();
+        const endTime = startTime + duration;
+        let timer;
+
+        function run() {
+            const now = new Date().getTime();
+            const remaining = Math.max((endTime - now) / duration, 0);
+            const value = end - (remaining * range);
+            element.textContent = `${value.toFixed(2)} ${unit}`;
+            if (value === end) {
+                clearInterval(timer);
+            }
+        }
+
+        timer = setInterval(run, stepTime);
+        run();
+    }
 </script>
+
+<style>
+    .custom-div-icon {
+        background: none;
+        border: none;
+    }
+    
+    .custom-popup {
+        padding: 10px;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .map-tiles {
+        filter: saturate(0.8) brightness(1.1);
+    }
+    
+    .stat-box, .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .stat-box:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
 {% endblock %}
