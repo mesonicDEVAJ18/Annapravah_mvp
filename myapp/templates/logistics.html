@@ -4,49 +4,364 @@
 {% block activeL %}active{% endblock %}
 
 {% block content %}
-<div class="hero-section text-center text-white d-flex align-items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)); background-size: cover; background-position: center; padding: 120px 0;">
+<div class="hero-section text-center text-white d-flex align-items-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">Logistics Dashboard</h1>
-        <p class="lead">Manage and review food donation matches.</p>
+        <h1 class="display-4 fw-bold mb-3">Logistics Dashboard</h1>
+        <p class="lead mb-4">Efficiently manage and track food donation matches</p>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-value">{{ matches|length }}</div>
+                <div class="stat-label">Active Matches</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">Support</div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Matches Section -->
-<div class="container py-5">
-    <h2 class="text-center mb-5">Donation-Request Matches</h2>
-    {% if matches %}
-        <div class="row">
-            {% for req, don, score in matches %}
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <!-- Request Details -->
-                            <h4 class="card-title">Request: {{ req.food_type }} ({{ req.quantity }} kg)</h4>
-                            <p class="card-text"><strong>Location:</strong> {{ req.location }}</p>
-                            <p class="card-text">
-                                <strong>Preferred Date:</strong> 
-                                {{ req.preferred_datetime|date:"M d, Y H:i" }}
-                            </p>
-                            <hr>
-                            <!-- Donation Details -->
-                            <h5 class="card-title">Donation: {{ don.food_type }} ({{ don.quantity }} kg)</h5>
-                            <p class="card-text"><strong>Location:</strong> {{ don.current_location }}</p>
-                            <p class="card-text">
-                                <strong>Expiry Date:</strong> 
-                                {{ don.expiry_date|date:"M d, Y" }}
-                            </p>
-                            <p class="text-muted">
-                                <strong>Match Score:</strong> {{ score|floatformat:2 }}
-                            </p>
-                            <!-- Navigate Button (sends request and donation IDs to the navigate view) -->
-                            <a href="{% url 'navigate' req.id don.id %}" class="btn btn-primary mt-3">Navigate</a>
+<div class="matches-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Active Matches</h2>
+            <p class="text-muted">Connecting donors with those in need</p>
+        </div>
+
+        {% if matches %}
+            <div class="row g-4">
+                {% for req, don, score in matches %}
+                    <div class="col-lg-6">
+                        <div class="match-card">
+                            <div class="match-header">
+                                <div class="match-score">
+                                    <div class="score-circle">
+                                        {{ score|floatformat:0 }}%
+                                    </div>
+                                    <span>Match Score</span>
+                                </div>
+                                <div class="match-status">
+                                    <span class="status-badge">Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="match-body">
+                                <div class="match-section request-section">
+                                    <h4>
+                                        <i class="bi bi-box-arrow-in-down-right text-primary"></i>
+                                        Request Details
+                                    </h4>
+                                    <div class="detail-grid">
+                                        <div class="detail-item">
+                                            <span class="label">Food Type</span>
+                                            <span class="value">{{ req.food_type }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Quantity</span>
+                                            <span class="value">{{ req.quantity }} kg</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Location</span>
+                                            <span class="value">{{ req.location }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Preferred Date</span>
+                                            <span class="value">{{ req.preferred_datetime|date:"M d, Y H:i" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="match-divider">
+                                    <div class="divider-line"></div>
+                                    <div class="divider-icon">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </div>
+                                </div>
+
+                                <div class="match-section donation-section">
+                                    <h4>
+                                        <i class="bi bi-box-arrow-up-right text-success"></i>
+                                        Donation Details
+                                    </h4>
+                                    <div class="detail-grid">
+                                        <div class="detail-item">
+                                            <span class="label">Food Type</span>
+                                            <span class="value">{{ don.food_type }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Quantity</span>
+                                            <span class="value">{{ don.quantity }} kg</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Location</span>
+                                            <span class="value">{{ don.current_location }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="label">Expiry Date</span>
+                                            <span class="value">{{ don.expiry_date|date:"M d, Y" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="match-footer">
+                                <a href="{% url 'navigate' req.id don.id %}" class="btn btn-primary">
+                                    <i class="bi bi-map me-2"></i>
+                                    Start Navigation
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-center">No matches found.</p>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-matches">
+                <i class="bi bi-inbox text-muted"></i>
+                <h3>No Active Matches</h3>
+                <p class="text-muted">Check back later for new donation matches</p>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, rgba(25,135,84,0.95) 0%, rgba(20,108,67,0.95) 100%),
+                    url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0 60px;
+        position: relative;
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .stat-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+        min-width: 150px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .matches-section {
+        padding: 4rem 0;
+        background-color: #f8f9fa;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .match-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .match-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .match-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .match-score {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .score-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #198754;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .status-badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 500;
+    }
+
+    .match-body {
+        padding: 1.5rem;
+    }
+
+    .match-section {
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .match-section h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        color: #2d3748;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .detail-item .label {
+        font-size: 0.875rem;
+        color: #718096;
+    }
+
+    .detail-item .value {
+        font-weight: 500;
+        color: #2d3748;
+    }
+
+    .match-divider {
+        position: relative;
+        height: 40px;
+        margin: 1rem 0;
+    }
+
+    .divider-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e9ecef;
+    }
+
+    .divider-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #718096;
+    }
+
+    .match-footer {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-primary {
+        background-color: #198754;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #146c43;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .no-matches {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    }
+
+    .no-matches i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            min-width: auto;
+        }
+
+        .match-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .match-score {
+            flex-direction: column;
+        }
+
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 {% endblock %}
