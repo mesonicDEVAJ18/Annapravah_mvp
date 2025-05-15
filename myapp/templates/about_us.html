@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About Us - Annapravah{% endblock %}
+{% block activeAbout %}active{% endblock %}
+
+{% block content %}
+<div class="header-banner">
+    <div class="overlay"></div>
+        <div class="header-content">
+            <h1>About Us</h1>
+        </div>
+    </div>
+</div>
+<!-- Team Member Section -->
+<div class="container py-5">
+  <h2 class="text-center mb-5">Meet the Team</h2>
+
+  <!-- Devaj -->
+  <div class="row align-items-center mb-5">
+    <div class="col-md-4 text-center">
+      <img src="{% static 'images/Devaj.png' %}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover;" alt="Devaj Rathore">
+    </div>
+    <div class="col-md-8">
+      <h3>Devaj Rathore</h3>
+      <p>
+        <a href="https://github.com/mesonicDEVAJ18" target="_blank"><i class="bi bi-github fs-4"></i></a>
+        <a href="https://www.linkedin.com/in/devajrathore/" class="mx-3" target="_blank"><i class="bi bi-linkedin fs-4 text-primary"></i></a>
+        <a href="https://www.instagram.com/devajr_18/" target="_blank"><i class="bi bi-instagram fs-4 text-danger"></i></a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Saanvi -->
+  <div class="row align-items-center mb-5 flex-md-row-reverse">
+    <div class="col-md-4 text-center">
+      <img src="{% static 'images/Saanvi.jpg' %}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover;" alt="Saanvi Singh">
+    </div>
+    <div style="text-align: right;" class="col-md-8">
+      <h3>Saanvi Singh</h3>
+      <p>
+        <a href="https://github.com/saanvi23454" class="me-3" target="_blank"><i class="bi bi-github fs-4"></i></a>
+        <a href="https://www.linkedin.com/in/saanvi-s/" target="_blank"><i class="bi bi-linkedin fs-4 text-primary"></i></a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Manaswi -->
+  <div class="row align-items-center mb-5">
+    <div class="col-md-4 text-center">
+      <img src="{% static 'images/Manaswi.png' %}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover;" alt="Manaswi Singh">
+    </div>
+    <div class="col-md-8">
+      <h3>Manaswi Singh</h3>
+      <p>
+        <a href="https://github.com/Manaswi2006" class="me-3" target="_blank"><i class="bi bi-github fs-4"></i></a>
+        <a href="https://www.linkedin.com/in/manaswi-singh/" target="_blank"><i class="bi bi-linkedin fs-4 text-primary"></i></a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Shubhi -->
+  <div class="row align-items-center mb-5 flex-md-row-reverse">
+    <div class="col-md-4 text-center">
+      <img src="{% static 'images/Shubhi.png' %}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover;" alt="Shubhi Jain">
+    </div>
+    <div style="text-align: right;" class="col-md-8">
+      <h3>Shubhi Jain</h3>
+      <p>
+        <a href="https://github.com/j-shubhi" class="me-3" target="_blank"><i class="bi bi-github fs-4"></i></a>
+        <a href="https://www.linkedin.com/in/j-shubhi/" target="_blank"><i class="bi bi-linkedin fs-4 text-primary"></i></a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Backed By Section -->
+<div class="container py-5">
+  <h2 class="text-center mb-4">Backed By</h2>
+  <div class="row justify-content-center align-items-center text-center">
+    
+    <!-- Organization 1 -->
+    <div class="col-6 col-md-3 mb-4">
+      <img src="{% static 'images/Brijwasi.png' %}" alt="Organization 1" class="img-fluid" style="max-height: 200px;">
+      <p class="mt-2 fw-bold">The Brijwasi Foundation</p>
+    </div>
+
+    <!-- Organization 2 -->
+    <div class="col-6 col-md-3 mb-4">
+      <img src="{% static 'images/Cyfuse.png' %}" alt="Organization 2" class="img-fluid" style="max-height: 200px;">
+      <p class="mt-2 fw-bold">Cyfuse IIIT Delhi</p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .bi:hover {
+    transform: scale(1.2);
+    transition: all 0.2s ease-in-out;
+  }
+  .header-banner {
+        position: relative;
+        height: 200px;
+        background-image: url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center; /* horizontal centering */
+        align-items: center;     /* vertical centering */
+        text-align: center;      /* center text within each flex item */
+    }
+</style>
+
+{% endblock %}

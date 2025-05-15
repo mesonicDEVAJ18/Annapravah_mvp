@@ -40,4 +40,5 @@ urlpatterns = [
     path('partner_ngo/', views.partner_ngo, name='partner_ngo'),
 
     path('map/', views.map, name='map'),
+    path('about_us/', views.about_us, name='about_us')
 ]
