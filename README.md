@@ -1,8 +1,6 @@
-# Lines of Code 7 - Hackathon Project
-
-https://www.canva.com/design/DAGekjFVfKI/tISWwtdN1vQK7L8h_5k6MQ/edit
-
 # Annapravah
+https://www.canva.com/design/DAGs5syhpG0/NjWI-KTBUVYCCiT2vvguTQ/edit?utm_content=DAGs5syhpG0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ## Bridging the Gap Between Food Waste and Hunger
 
 ### Team Members:
