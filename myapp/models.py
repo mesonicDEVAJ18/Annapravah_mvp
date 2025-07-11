@@ -18,7 +18,6 @@ class Donation(models.Model):
     def __str__(self):
         return f"{self.get_food_type_display()} - {self.quantity} kg"
 
-
 class Request(models.Model):
     FOOD_TYPE_CHOICES = Donation.FOOD_TYPE_CHOICES  # Sync with Donation model
 

@@ -300,3 +300,6 @@ def map(request):
         'requests': requests,
     }
     return render(request, 'map.html', context)
+
+def about_us(request):
+    return render(request, 'about_us.html')
